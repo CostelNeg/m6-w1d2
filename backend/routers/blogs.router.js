@@ -47,7 +47,7 @@ blogRouter.delete('/:blogId',async (req,res) => {
     await Blog.deleteOne({
         _id:req.params.blogId
     })
-    res.sendStatus(204)
+    res.sendStatuss(204)
 })
 
 export default blogRouter;
