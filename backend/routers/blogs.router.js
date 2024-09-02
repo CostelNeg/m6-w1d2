@@ -1,7 +1,57 @@
 import express from 'express';
 import Blog from '../models/blogPost.js';
+import cloudinary from '../config/cloudinary.js';
+import multer from 'multer';
+
+//prima di tutto configuriamo multer per salvare l'imagine in memoria temporaneamente
+const storage = multer.memoryStorage()
+
+//adesso deefiniamo  l'upload (oggetto middleware ) grazie alla config di multer di prima 
+
+const upload = multer({storage: storage})
+
+
 
 const blogRouter = express.Router();
+blogRouter.patch(
+    "/:blogId/cover", upload.single("cover"),
+    async(req,res,next)=> {
+        const id = req.params.blogId
+        //vediamo se esiste
+        try{
+            const blog =await Blog.findById(id);
+            if(!blog){
+                return res.status(404).send({message:'Blog non Trovato'})
+            }
+            if(req.file){
+                const result = await new Promise((resolve, reject) => {
+                    const uploadFile = cloudinary.uploader.upload_stream(
+                        {folder:'cover'},
+                        (error,result) => {
+                            if(error) reject(error)
+                                else resolve(result)
+                        }
+                    );
+                    //invio de buffer del img
+                    uploadFile.end(req.file.buffer)
+                });
+
+                //url sicuro su cloudiary (https)
+                blog.cover = result.secure_url;
+                await blog.save();
+                res.send({
+                    message:'Cover del blog aggiunta con successo',
+                    cover: blog.cover
+                });
+            }else{
+                res.status(400).send({message:'Nessun file fornito'})
+            }
+        }catch(err){
+            console.log(err);
+            res.status(500).send({message:'Errore nel caricare la Cover'})
+        }
+    }
+)
 
 blogRouter.get('/', async (req,res) =>{
     //recuper di tutti i post presenti
