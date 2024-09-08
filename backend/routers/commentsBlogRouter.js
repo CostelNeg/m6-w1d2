@@ -28,6 +28,8 @@ commentsBlogRouter.post("/:blogId/comments", async(req,res) => {
             return res.status(404).send({message:'BlogNon trovato!'});
         }
         const newComment = {content, author, createdAt:new Date()}
+
+        //filter per cancelare pasando l'id del commento
         blog.comments.push(newComment);
         await blog.save()
 
@@ -38,6 +40,6 @@ commentsBlogRouter.post("/:blogId/comments", async(req,res) => {
         res.status(500).send({message:'Errore durante il caricamento del commento'})
     }
 })
-
+ 
 
 export default commentsBlogRouter;

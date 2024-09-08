@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
 import multer from "multer";
+import bycrypt from 'bcrypt'
 const userRouter = express.Router();
 
 //prima di tutto
@@ -42,19 +43,25 @@ userRouter.get("/:userId", async (req, res, next) => {
     res.status(404).send({ message: "Non trovato" });
   }
 });
-userRouter.post("/", async (req, res, next) => {
+userRouter.post("/authors", async (req, res, next) => {
   //creiamo un nuvo utente, dopo slash va sempre il "usr"
 
-  const userData = req.body;
+  const {name,email,password} = req.body
 
-  const newUser = new User(userData);
-
-  try {
-    const createdUser = await newUser.save();
-    res.status(201).send({ createdUser });
-  } catch (error) {
-    res.status(400).send({ message: "Qualcosa e andato storto" });
+  const userEsistente = await User.findOne({email});
+  if(userEsistente ){
+    return res.status(400).send({message:'Utente gia registrato'})
   }
+
+  const hashPass = await bycrypt.hash(password,10);
+  const newUser = new User({
+    name,
+    email,
+    password:hashPass,
+  });
+
+  const savedUser = await newUser.save();
+  res.status(201).send(savedUser)
 });
 userRouter.put("/:userId", async (req, res, next) => {
   const id = req.params.userId;

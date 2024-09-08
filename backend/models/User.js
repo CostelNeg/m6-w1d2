@@ -4,10 +4,15 @@ const userSchema = new Schema(
   {
     name: { type: String },
     email: { type: String, required: true, unique: true },
-    age: Number,
     role: String,
     avatar:String,
-    approved: Boolean,
+    password: {
+      type:String,
+      required:true,
+    },
+    verifiedAt: Date,
+    verificationCode:String,
+    
   },
   {
     //nome della collection nel mongo

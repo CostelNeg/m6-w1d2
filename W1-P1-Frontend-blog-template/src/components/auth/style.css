@@ -1,0 +1,15 @@
+.login {
+  background-color: cadetblue;
+    display: flex;
+    flex-direction: column;
+    margin-top: 11rem;
+    width:50%;
+  }
+  
+  .login-content{
+margin: auto;
+ width: 50%;
+ 
+ position: relative;
+  }
+  
