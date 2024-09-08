@@ -21,7 +21,7 @@ authRouter.post('/register', async(req,res) => {
             const newUser = new User({
                 name,
                 email,
-                password:passHashed
+                password: passHashed,
             });
             //salviamo utente 
             await newUser.save();

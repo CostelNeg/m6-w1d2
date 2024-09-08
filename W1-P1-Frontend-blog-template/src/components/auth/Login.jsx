@@ -60,9 +60,10 @@ const Login = () =>{
                 <Button 
         as={Link}
         to='/register'
-        className="blog-navbar-add-button bg-dark"
-        size="lg" >
-          Registrati
+        className="blog-navbar-add-button bg-blue"
+        style={{width: 'fit-content'}}
+         >
+          Sign Up
         </Button>
             </Form>
         </Container>

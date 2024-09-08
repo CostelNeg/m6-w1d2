@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
 import multer from "multer";
 import bycrypt from 'bcrypt'
+import authToken from "../middleware/auth.js";
 const userRouter = express.Router();
 
 //prima di tutto
@@ -12,7 +13,7 @@ const storage = multer.memoryStorage();
 // definiamo l'upload con la config di storage
 const upload = multer({ storage: storage });
 
-userRouter.get("/", async (req, res, next) => {
+userRouter.get("/",authToken, async (req, res, next) => {
   //recuperiamo i dati dal db
 
   //dichiarimai limite paginazione e user per pagina
@@ -31,7 +32,7 @@ userRouter.get("/", async (req, res, next) => {
     totalPages,
   });
 });
-userRouter.get("/:userId", async (req, res, next) => {
+userRouter.get("/:userId",authToken, async (req, res, next) => {
   //recuperiamo i dati del utente con id === userID dal db
   const id = req.params.userId;
   //salvo l'utente trovato
@@ -43,7 +44,7 @@ userRouter.get("/:userId", async (req, res, next) => {
     res.status(404).send({ message: "Non trovato" });
   }
 });
-userRouter.post("/authors", async (req, res, next) => {
+userRouter.post("/authors",authToken, async (req, res, next) => {
   //creiamo un nuvo utente, dopo slash va sempre il "usr"
 
   const {name,email,password} = req.body
@@ -57,13 +58,17 @@ userRouter.post("/authors", async (req, res, next) => {
   const newUser = new User({
     name,
     email,
-    password:hashPass,
+    password: hashPass,
   });
 
   const savedUser = await newUser.save();
-  res.status(201).send(savedUser)
+
+  //salviamo la pass 
+  const userRes = savedUser.toObject();
+  delete userRes.password;
+  res.status(201).send()
 });
-userRouter.put("/:userId", async (req, res, next) => {
+userRouter.put("/:userId",authToken, async (req, res, next) => {
   const id = req.params.userId;
   const userData = req.body;
   try {
