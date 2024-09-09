@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import {Form,Button,Container} from 'react-bootstrap';
 import {useNavigate} from 'react-router-dom';
 import { Link } from "react-router-dom";
@@ -17,6 +17,22 @@ const Login = () =>{
     //hook per la navigazione 
 
     const navigate = useNavigate()
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token'); // Extract token from URL
+
+        if (token) {
+            // Store token in localStorage
+            localStorage.setItem('token', token); 
+            navigate('/'); 
+            // Redirect to homepage or dashboard after login
+        }
+    }, [navigate]); // Dependency on navigate
+
+    // Google OAuth login handler
+    const handleGoogleLogin = () => {
+        window.location.href = 'http://localhost:5000/auth/google'; // Redirect to Google OAuth
+    };
 
     //gestione del form e del invio 
     
@@ -65,6 +81,12 @@ const Login = () =>{
          >
           Sign Up
         </Button>
+        <Button
+                    onClick={handleGoogleLogin}
+                    className="mt-4"
+                >
+                    Login with Google
+                </Button>
             </Form>
         </Container>
     )

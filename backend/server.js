@@ -6,6 +6,8 @@ import userRouter from './routers/user.router.js';
 import blogRouter from './routers/blogs.router.js';
 import authRouter from './routers/auth.router.js'
 import  authToken  from './middleware/auth.js';
+import passport from 'passport';
+
 
 const port = process.env.PORT || 5000
 
@@ -22,6 +24,8 @@ await mongoose.connect(MONGO_URI)
 })
 
 app.use(cors())
+app.use(passport.initialize())
+
 app.use(express.json());
 
 app.use('/auth', authRouter)

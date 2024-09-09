@@ -3,10 +3,32 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import authToken from '../middleware/auth.js';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import passport from 'passport'
 
 
 const authRouter = express.Router();
 
+authRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Google OAuth callback URL
+authRouter.get('/google/callback',
+    passport.authenticate('google', { session: false, failureRedirect: '/' }),
+    (req, res) => {
+      // Successful authentication, redirect with JWT
+      const token = req.user.token;
+      res.redirect(`${process.env.FRONT_END_URL}/?token=${token}`); // Send token to frontend
+    }
+  );
+
+
+// authRouter.get('/auth/success', (req, res) => {
+
+//   const { token } = req.query;
+
+
+//   res.json({ token });
+//});
 //endpoint per la registrazione
 authRouter.post('/register', async(req,res) => {
     try{
