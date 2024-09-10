@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import authToken from '../middleware/auth.js';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+//import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import passport from 'passport'
 
 
@@ -50,6 +50,7 @@ authRouter.post('/register', async(req,res) => {
 
             res.status(201).send({message:'Utente salvato con successo'})
     }catch(err){
+        console.log(err)
         res.status(500).send({message:'Errore durante la registrazione'})
     }
 });
